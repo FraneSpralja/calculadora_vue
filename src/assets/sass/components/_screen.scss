@@ -3,17 +3,17 @@
 
 .screen {
     height: 30px;
-    padding: 20px;
+    padding: 4px 10px;
     background-color: $color-gray-dark-1;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
     grid-column: 1 / 3;
     box-shadow: inset 0 0 2px 3px $color-green;
+    display: table;
 
     @include Breakpoint($screen-sm-1) {
         height: 60px;
         padding: 30px;
-        display: table;
     }
 
     &-text {

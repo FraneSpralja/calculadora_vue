@@ -94,18 +94,18 @@ html {
 
 .screen {
   height: 30px;
-  padding: 20px;
+  padding: 4px 10px;
   background-color: #656565;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   grid-column: 1/3;
   box-shadow: inset 0 0 2px 3px #033f03;
+  display: table;
 }
 @media (min-width: 490px) {
   .screen {
     height: 60px;
     padding: 30px;
-    display: table;
   }
 }
 .screen-text {
