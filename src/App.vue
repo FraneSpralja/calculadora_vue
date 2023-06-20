@@ -4,7 +4,7 @@
 
 <script>
 
-import Calculadora from './page/Calculadora.vue';
+import Calculadora from '@/page/Calculadora';
 
 export default {
   name: 'App',

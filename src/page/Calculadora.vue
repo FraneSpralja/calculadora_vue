@@ -1,115 +1,138 @@
 <template>
-    <div class="calculadora">        
-        <Screen 
-            :numOne="numOne"
-            :operator="operator"
-            :numTwo="numTwo"
-            :result="result"
-            @endOperation="cleanVars($event)"
-        />
-        <Numbers 
-            :numbers="numbersArr"
-            :operator="checkOperator"
-            @first="getFirstNumber($event)"
-            @second="getSecondNumber($event)"
-        />
-        <Operators 
-            :operators="operators"
-            @operator="getOperator($event)"
-            @equal="checkResult($event)"
-        />
-    </div>
+    <Switchs 
+        :reset="reset" 
+        @clean-all="cleanAll"
+        @fix-to-result="fixToResult"
+    />
+    <Screen 
+        :number="number"
+        :operator="operator"
+        :cleaner="cleanNumber"
+        :resolve="resolve"
+        :reset="reset"
+    />
+    <Numbers 
+        :numbers="numbers"
+        :cleaner="cleanNumber"
+        :reset="reset"
+        @number-string="pushNumber"
+    />
+    <Operator 
+        :operators="operatorsArr"
+        :reset="reset"
+        @push-operator="pushOperator"
+        @show-result="showResult"
+    />
 </template>
 
 <script>
 import Screen from '@/components/Screen';
 import Numbers from '@/components/Numbers';
-import Operators from '@/components/Operators';
+import Operator from '@/components/Operator';
+import Switchs from '@/components/Switchs';
 
-import printNumbers from '@/assets/helpers/printNumbers';
-import printOperators from '@/assets/helpers/printOperators';
+import { arrayOfNumbers } from '@/assets/helpers/getNumbers'
+import { arrayOfOperators } from '@/assets/helpers/getOperators'
+import { equationResult } from '@/assets/helpers/equationResolve';
 
 export default {
-    name: 'Calculadora',
-    components: { 
+    components: {
         Screen,
         Numbers,
-        Operators
+        Operator,
+        Switchs
     },
     data() {
         return {
-            numbersArr: null,
-            operators: null,
-            numOne: [],
-            numTwo: [],
-            operator: null,
-            checkOperator: false,
-            result: false,
-            reset: false
+            numbers: null,
+            operatorsArr: null,
+            operator: "",
+            number: "",
+            equationArr: [],
+            cleanNumber: false,
+            resolve: "",
+            reset: false,
+            fixed: null,
         }
     },
     watch: {
-        operator:{
-            handler(value) {
-                if(value !== null) return this.checkOperator = true;
-            },
-            immediate: true,
+        operator: {
             deep: true,
+            handler(newValue, oldValue) {
+                if( this.equationArr.length <= 0 && this.operator === "(") {
+                    this.equationArr.push(this.operator)
+                } else if (newValue) {
+                    if(this.operator == ")") {
+                        this.equationArr.push(this.number);
+                        this.equationArr.push(this.operator);
+                        this.cleanNumber = true;
+                        
+                    } else if(this.equationArr[this.equationArr.length - 1] === ")") {                        
+                        this.equationArr.push(this.operator);
+                        this.cleanNumber = true;
+                        
+                    } else {
+                        this.equationArr.push(this.number);
+                        this.equationArr.push(this.operator);
+                        this.cleanNumber = true;
+                    }
+                }
+            }
         },
-        checkOperator: {
-            handler(value) {
-                if(value == false) {
-                    this.getFirstNumber()
-                    return
+        number: {
+            deep: true,
+            handler(newValue, oldValue) {
+                if(newValue) {
+                    this.cleanNumber = false;
+
+                    if(this.reset) this.reset = false;
                 }
-                if(value == true) {
-                    this.getSecondNumber()
-                }
-            },
+            }
         }
     },
     methods: {
         getNumbers() {
-            this.numbersArr = printNumbers();
+            this.numbers = arrayOfNumbers()
         },
-        printOperators() {
-            this.operators = printOperators()
+        getOperators() {
+            this.operatorsArr = arrayOfOperators()
         },
-        getOperator(op) {
-            this.operator = op;
+        pushNumber(num) {
+            this.number = num
         },
-        getFirstNumber(number) {
-            if(!this.reset) {
-                this.numOne.push(number)
-            } else {
-                this.numOne = [];
-                this.numTwo = [];
-                this.operator = null;
-                this.checkOperator = false;
-                this.result = false;
-                this.numOne.push(number)
+        pushOperator(opt) {
+            this.operator = opt
+        },
+        showResult() {
+            this.equationArr.push(this.number);
+            this.resolve = equationResult(this.equationArr, this.fixed);
+            this.operator = "";
+            this.number = "";
+            this.equationArr = [];
+            this.reset = true;
+        },
+        cleanAll(r) {
+            if(r) {
+                this.resolve = "";
+                this.operator = "";
+                this.number = "";
+                this.equationArr = [];
+                this.reset = true;
             }
         },
-        getSecondNumber(number) {
-            this.numTwo.push(number)
-        },
-        checkResult(equal) {
-            if(equal) this.result = true;
-        },
-        cleanVars(clean) {
-            this.reset = true
+        fixToResult(e) {
+            if(this.resolve !== "") {
+                this.fixed = e;
+                this.resolve = Number(this.resolve).toFixed(e)
+            } else {
+                this.fixed = e;
+            }
         }
     },
     mounted() {
-        this.getNumbers();
-        this.printOperators();
-    },
-    created() {
-        this.cleanVars()
+        this.getNumbers(),
+        this.getOperators()
     }
 }
+
 </script>
-
-<style>
-
-</style>

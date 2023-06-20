@@ -1,0 +1,5 @@
+@mixin Breakpoint($screen) {
+    @media(min-width: $screen) {
+        @content;
+    };
+}

@@ -1,43 +1,42 @@
+import Operator from '@/components/Operator';
 <template>
     <div class="screen">
-        <div 
-            v-if="!newEquation"
-            class="screen_results"
-        >
-            0
+        <div v-if="resolve === ''" class="screen-text">
+            {{ cleaner === false ? numberScreen : operator }}
         </div>
-        <div 
-            v-else-if="newEquation && !equation"
-            class="screen_results">
-            {{ newEquation }}
-        </div>
-        <div 
-            v-else-if="newEquation && equation"
-            class="screen_results">
-            {{ equation.toFixed(3) }}
+        <div v-else-if="resolve !== ''" class="screen-text">
+            {{ resolve }}
         </div>
     </div>
 </template>
 
 <script>
+
 export default {
-    name: 'Screen',
+    name: "Screen",
+
     props: {
-        numOne: {
-            type: Array,
+        number: {
+            type: String,
             required: true,
-            default: null
+            default: ""
         },
         operator: {
             type: String,
             required: true,
+            default: "",
         },
-        numTwo: {
-            type: Array,
+        cleaner: {
+            type: Boolean,
             required: true,
-            default: null
+            default: false,
         },
-        result: {
+        resolve: {
+            type: String,
+            required: true,
+            default: "",
+        },
+        reset: {
             type: Boolean,
             required: true,
             default: false,
@@ -45,67 +44,33 @@ export default {
     },
     data() {
         return {
-            newEquation: null,
-            equation: null,
+            numberScreen: "0",
+            resolveStr: "",
         }
     },
     watch: {
-        numOne:{
-                deep: true,
-                handler(newVal, oldVal) {
-                this.newEquation = [...this.numOne].join("")
-            }
-        },
-        operator:{
-                deep: true,
-                async handler(newVal, oldVal) {
-                    if(await newVal) {
-                        this.newEquation = [ ...this.operator ].join("")
-                    }
-            }
-        },
-        numTwo:{
-                deep: true,
-                handler(newVal, oldVal) {
-                    if(newVal) {
-                        this.newEquation = [ ...this.numTwo].join("")
-                    }
-            }
-        },
-        result: {
+        number: {
             deep: true,
-            async handler(newVal, oldVal) {
-                if(await newVal) {
-                    let firstNum = Number([...this.numOne].join(""))
-                    let secondNum = Number([...this.numTwo].join(""))
-
-                    switch(this.operator) {
-                        case "+":
-                            this.equation = firstNum + secondNum;
-                            this.$emit('endOperation', true)
-                            break;
-                        case "-":
-                            this.equation = firstNum - secondNum;
-                            this.$emit('endOperation', true)
-                            break;
-                        case "x":
-                            this.equation = firstNum * secondNum;
-                            this.$emit('endOperation', true)
-                            break;
-                        case "/":
-                            this.equation = firstNum / secondNum;
-                            this.$emit('endOperation', true)
-                            break;
-                        default:
-                            this.equation = "Error";
-                    }
+            handler(newValue, oldValue) {
+                if(newValue) this.numberScreen = this.number;
+            }
+        },
+        resolve: {
+            deep: true,
+            handler(newValue, oldValue) {
+                if(newValue) this.resolveStr = this.resolve;
+            }
+        },
+        reset: {
+            deep: true,
+            handler(newValue, oldValue) {
+                if(this.reset) {
+                    this.resolveStr = "";
+                    this.numberScreen = "0"
                 }
             }
         }
-    },
+    }
 }
+
 </script>
-
-<style>
-
-</style>

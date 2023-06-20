@@ -1,0 +1,23 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.grid {
+    display: grid;
+    grid-auto-rows: max-content;
+    row-gap: 10px;
+    &-numbers {
+        grid-template-columns: repeat(3, 77px);
+        @include Breakpoint($screen-sm-1) {
+            grid-template-columns: repeat(3, 115px);
+        }
+    }
+    
+    &-operators {
+        grid-template-columns: 66px;
+        grid-column: 2 / 3;
+        justify-self: end;
+        @include Breakpoint($screen-sm-1) {
+            grid-template-columns: 115px;
+        }
+    }
+}

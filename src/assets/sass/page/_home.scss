@@ -1,0 +1,22 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+#app {
+    background-color: $color-primary;
+    display: grid;
+    margin: auto;
+    position: relative;
+    row-gap: 10px;
+    padding: 5px 10px 15px;
+    border-radius: 12px;
+    grid-template-rows: 67px 575px;
+    grid-template-columns: calc(59px * 4) 65px;
+    width: fit-content;
+    height: 445px;
+    
+    @include Breakpoint($screen-sm-1) {
+        height: 705px;
+        grid-template-columns: 345px 115px;
+        grid-template-rows: 120px 575px;
+    }
+}
