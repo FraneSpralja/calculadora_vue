@@ -61,6 +61,7 @@ export default {
             handler(newValue, oldValue) {
                 if( this.equationArr.length <= 0 && this.operator === "(") {
                     this.equationArr.push(this.operator)
+                    this.cleanNumber = true;
                 } else if (newValue) {
                     if(this.operator == ")") {
                         this.equationArr.push(this.number);
